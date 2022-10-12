@@ -10,5 +10,5 @@ To install replace the following parameters in remote.ini:
 System Requirements
 * mIRC Chat client
 * swithmail tool
-* SMTP Server(like quick 'n easy mail server)YOU WILL WANT YOUR OWN EMAIL SERVER
+* SMTP Server(like <a href="http://www.pablosoftwaresolutions.com/html/quick__n_easy_mail_server.html">quick 'n easy mail server</a>)YOU WILL WANT YOUR OWN EMAIL SERVER
 * A Domain name
