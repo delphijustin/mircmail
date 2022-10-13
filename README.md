@@ -9,6 +9,8 @@ To install replace the following parameters in remote.ini:
 
 To transfer emails back from mailbox to mIRC please edit mircmail.bat and mIRCMail.conf
 
+Run mircmail.bat file to begin scanning mailbox.
+
 System Requirements
 * mIRC Chat client
 * swithmail tool
