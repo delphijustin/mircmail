@@ -8,13 +8,23 @@ uses
 function GetConsoleWindow:HWND;stdcall;external kernel32;
 procedure mIRCExecuteA(hw:hwnd;inst:hinst;command:pansichar;nShow:integer);stdcall;
 var mIRC:TmIRCControl;
+conf:TStringlist;
+target:string;
 BEGIN
 mirc:=tmirccontrol.Create(nil);
 mirc.Active:=true;
+target:=mirc.ActiveChan;
+conf:=tstringlist.Create;
+conf.LoadFromFile('mircmail.conf');
+if conf.IndexOfName('rem lastTarget')>-1then
+target:=conf.Values['rem lastTarget'];
 case command[0] of
 '/':mirc.Command(strpas(command),1);
-else mirc.Say(mirc.ActiveChan,strpas(command));
+'=':target:=strpas(@command[1]);
+else mirc.Say(target,strpas(command));
 end;
+conf.Values['rem lastTarget']:=target;
+conf.SaveToFile('mircmail.conf');
 mirc.Free;
 END;
 function vbsError(errorlevel:dword):string;
