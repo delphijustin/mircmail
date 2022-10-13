@@ -1,0 +1,54 @@
+library mircmail;
+
+uses
+  SysUtils,
+  windows,shellapi,
+  Classes,
+  mIRCc in '..\TmIRCControl\mIRCc.pas';
+function GetConsoleWindow:HWND;stdcall;external kernel32;
+procedure mIRCExecuteA(hw:hwnd;inst:hinst;command:pansichar;nShow:integer);stdcall;
+var mIRC:TmIRCControl;
+BEGIN
+mirc:=tmirccontrol.Create(nil);
+mirc.Active:=true;
+case command[0] of
+'/':mirc.Command(strpas(command),1);
+else mirc.Say(mirc.ActiveChan,strpas(command));
+end;
+mirc.Free;
+END;
+procedure InboxCheckerA(hw:hwnd;inst:hinst;mailbox:pansichar;nShow:integer);stdcall;
+var emlSR:tsearchrec;
+emlname:array[0..max_path]of ansichar;
+exec:tshellexecuteinfoa;
+b:boolean;
+begin
+allocconsole;setconsoletitle('mIRCMail Messages');showwindow(getconsolewindow,
+nshow);
+while FindWindow('mIRC',nil)<>0do
+begin
+zeromemory(@emlsr,sizeof(emlsr));
+b:=(findfirst(format('%s*.eml',[mailbox]),faanyfile,emlSR)=0);
+if b then begin
+sysutils.FindClose(emlsr);
+zeromemory(@exec,sizeof(exec));
+exec.cbSize:=sizeof(exec);
+exec.fMask:=SEE_MASK_NOCLOSEPROCESS or SEE_MASK_FLAG_NO_UI or SEE_MASK_NO_CONSOLE;
+exec.Wnd:=hw;
+exec.lpFile:='cscript.exe';
+exec.lpParameters:=strlfmt(stralloc(2049),2048,
+'recvmail.vbs //Nologo //B /eml:%s%s',[mailbox,emlsr.FindData.cFileName]);
+if not shellexecuteexa(@exec)then writeln(datetimetostr(now),' - ShellExecuteEx:',
+syserrormessage(getlasterror))else begin waitforsingleobject(exec.hprocess,
+infinite);closehandle(exec.hprocess);if not deletefile(strfmt(emlname,'%s%s',[
+mailbox,emlsr.finddata.cfilename]))
+then begin writeln(emlname,': delete error');sleep(15000);
+exitprocess(1);
+ end;
+end;
+end;
+end;
+end;
+exports mIRCExecuteA,InboxCheckerA;
+begin
+end.
