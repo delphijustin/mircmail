@@ -7,6 +7,8 @@ To install replace the following parameters in remote.ini:
 * YOUR_SMTP_SERVER To your smtp hostname
 * SEND_TO_ADDRESS As the email address that gets the chat emails
 
+To transfer emails back from mailbox to mIRC please edit mircmail.bat and mIRCMail.conf
+
 System Requirements
 * mIRC Chat client
 * swithmail tool
